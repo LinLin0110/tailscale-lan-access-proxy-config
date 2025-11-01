@@ -134,7 +134,10 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 
 **最后确保ipt2socks服务每次都开机重启，通过脚本ipt2socks-Auto.sh开机自启动实现（已做到开机重启脚本，就忽略）**  
 因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规Linux方法  
-`crontab -l 2>/dev/null; echo "@reboot sleep 25 && /data/ipt2socks-Auto.sh" | crontab - `  
+先安装boostchicken on-boot-script扩展  
+curl -L https://github.com/boostchicken/udm-utilities/raw/master/on-boot-script/installer.sh | sh
+
+`crontab -l 2>/dev/null; echo "@reboot sleep 25 && /data/on_boot.d/ipt2socks-Auto.sh" | crontab - `  
 **Done🎉**
 
 
