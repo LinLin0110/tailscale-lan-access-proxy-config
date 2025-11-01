@@ -30,7 +30,7 @@
 * 配置tailscale server，输入以下命令设置  
 #启动tailscale，并开启exit-node  
 `sudo tailscale up --advertise-exit-node`  
-#进阶设置，关ipv6防泄漏，防止出现ipv6依然为CN的情况（如果不在意/需要，可不执行）  
+#可选项，关ipv6防泄漏-防止出现ipv6依然为CN的情况（只是好看）  
 `sudo TS_NO_IPV6=1 tailscaled`
 
 **步骤B：用户端配置（iPhone为例）**  
@@ -92,8 +92,7 @@ Add nameserver
 * 并复制到 `data/on_boot.d`
 ```
 #!/bin/sh
-# 延时，确保网络与 tailscale 启动完成
-sleep 20
+PATH=/usr/sbin:/usr/bin:/sbin:/bin:/data
 
 # 定义端口变量
 LISTEN_PORT=60080
@@ -124,7 +123,7 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 ```
 运行脚本，一键启动ipt2socks 和 修改iptables  
 `chmod +x /data/on_boot.d/ipt2socks-Auto.sh`  
-`/data/on_boot.d/ipt2socks-Auto.sh`
+`sh /data/on_boot.d/ipt2socks-Auto.sh`
 
 **步骤F：测试和体验，客户端（iPhone为例）连接测试，在5G网络下功能是否正常**  
 关闭Wi-Fi，5G网络下，iPhone开启tailscaleVPN（确保以上配置正确，特别是iOS App中DNS要正确设置，以及开EXIT NODE选软路由，可回到步骤C看）
@@ -133,11 +132,10 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 * PS5串流测试
 
 **最后确保ipt2socks服务每次都开机重启，通过脚本ipt2socks-Auto.sh开机自启动实现（已做到开机重启脚本，就忽略）**  
-因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规Linux方法  
-先安装boostchicken on-boot-script扩展  
-curl -L https://github.com/boostchicken/udm-utilities/raw/master/on-boot-script/installer.sh | sh
+因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规Linux方法（crontab保活）  
+`(crontab -l 2>/dev/null; echo "* * * * * /data/on_boot.d/ipt2socks-Auto.sh >/dev/null 2>&1") | crontab -`  
+然后执行  `crontab -l`  检查一下
 
-`crontab -l 2>/dev/null; echo "@reboot sleep 25 && /data/on_boot.d/ipt2socks-Auto.sh" | crontab - `  
 **Done🎉**
 
 
