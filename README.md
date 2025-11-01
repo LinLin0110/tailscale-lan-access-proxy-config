@@ -30,7 +30,7 @@
 * 配置tailscale server，输入以下命令设置  
 #启动tailscale，并开启exit-node  
 `sudo tailscale up --advertise-exit-node`  
-#可选项，关ipv6防泄漏-防止出现ipv6依然为CN的情况（只是好看）  
+#可选项，关ipv6防泄漏-防止出现ipv6依然为CN的情况 
 `sudo TS_NO_IPV6=1 tailscaled`
 
 **步骤B：用户端配置（iPhone为例）**  
@@ -132,8 +132,8 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 * PS5串流测试
 
 **最后确保ipt2socks服务每次都开机重启，通过脚本ipt2socks-Auto.sh开机自启动实现（已做到开机重启脚本，就忽略）**  
-因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规Linux方法（crontab保活）  
-`(crontab -l 2>/dev/null; echo "* * * * * /data/on_boot.d/ipt2socks-Auto.sh >/dev/null 2>&1") | crontab -`  
+因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规方法（crontab保活）  
+`(crontab -l 2>/dev/null; echo "* * * * * pgrep -x ipt2socks >/dev/null || /data/on_boot.d/ipt2socks-Auto.sh >/dev/null 2>&1") | crontab -`
 然后执行  `crontab -l`  检查一下
 
 **Done🎉**
