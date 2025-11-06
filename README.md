@@ -30,7 +30,8 @@
 * 命令行会输出一个配置网页，例如，进去配置
 * 配置tailscale server，输入以下命令设置  
 #启动tailscale，并开启exit-node  
-`sudo tailscale up --advertise-exit-node`  
+`sudo tailscale up --advertise-exit-node`
+
 #可选项，关ipv6防泄漏-防止出现ipv6依然为CN的情况 
 `sudo TS_NO_IPV6=1 tailscaled`
 
