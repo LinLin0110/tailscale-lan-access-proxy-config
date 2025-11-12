@@ -45,7 +45,7 @@ EXIT NODE
 
 Subnet routes
     Off
-    #连接Socks5Server后就有局域网，此功能无需开启
+    #选择Exit-node出口后（配置好透明代理），就有局域网连接，此功能无需开启
 ```
 
 ```
