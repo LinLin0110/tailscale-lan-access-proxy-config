@@ -50,8 +50,7 @@ Subnet routes
 ```
 DNS
     Off
-    自定义;1.1.1.1,192.168.1.x
-    #和Tailscale网页管理中设置的DNS保持一致，否足无法成功代理，1.1.1.1可以替换成任意可解析.ts.net的DNS，192.168.1.x是Socks5Sever的地址 一般都自带了DNS服务器功能
+    自定义;0.0.0.0（DNS由代理服务器解析）
 ```
 
 **步骤C：tailscale网页控制配置**  
@@ -61,15 +60,6 @@ tailscale服务器-选择软路由
     Edit route settings
         Exit Node On
         #不开启就无法连接Socks5服务
-```
-```
-DNS设置；添加以下2个
-Add nameserver
-    1.1.1.1；并Edit Restrict to domain，匹配ts.net
-    #保证连接稳定性，专用解析，1.1.1.1可替换为任意可用DNS；放在前面的DNS优先级更高，客户端and网页管理 都先填1.1.1.1
-    Custom;192.168.1.x;Use with exit node
-    #不开启就无法使用DNS上网，192.168.1.x是Socks5Server的DNS地址
-
 ```
 
 **步骤D：准备Socks5Server提供主机，（以Mac为例）**  
@@ -91,7 +81,7 @@ Add nameserver
     * 记得把[192.168.1.x]替换为你的Socks5 Server ip；
     *  我的配置特殊（UnifiOS），导致ipt2socks只支持REDIRECT，不支持TPROXY（内核精简导致的）；动手能力强的可优化
 * 保存为`ipt2socks-Auto.sh`
-* 并复制到 `data/on_boot.d`
+* 并复制到 `/data`
 ```
 #!/bin/sh
 PATH=/usr/sbin:/usr/bin:/sbin:/bin:/data
@@ -124,8 +114,8 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 
 ```
 运行脚本，一键启动ipt2socks 和 修改iptables  
-`chmod +x /data/on_boot.d/ipt2socks-Auto.sh`  
-`sh /data/on_boot.d/ipt2socks-Auto.sh`
+`chmod +x /data/ipt2socks-Auto.sh`  
+`sh /data/ipt2socks-Auto.sh`
 
 **步骤F：测试和体验，客户端（iPhone为例）连接测试，在5G网络下功能是否正常**  
 关闭Wi-Fi，5G网络下，iPhone开启tailscaleVPN（确保以上配置正确，特别是iOS App中DNS要正确设置，以及开EXIT NODE选软路由，可回到步骤C看）
@@ -135,8 +125,8 @@ iptables -t nat -A PREROUTING -i tailscale0 -j IPT2S
 
 **最后确保ipt2socks服务每次都开机重启，通过脚本ipt2socks-Auto.sh开机自启动实现（已做到开机重启脚本，就忽略）**  
 因为UnifiOS的on_boot.d的目录不支持自启动，这里使用非常规方法（crontab保活）  
-`(crontab -l 2>/dev/null; echo "* * * * * pgrep -x ipt2socks >/dev/null || /data/on_boot.d/ipt2socks-Auto.sh >/dev/null 2>&1") | crontab -`
-然后执行  `crontab -l`  检查一下
+`(crontab -l 2>/dev/null; echo "* * * * * pgrep -x ipt2socks >/dev/null || /data/ipt2socks-Auto.sh >/dev/null 2>&1") | crontab -`
+然后执行  `crontab -l`  检查一下是否存在添加的规则
 
 **Done🎉**
 
