@@ -49,10 +49,6 @@ Subnet routes
 ```
 
 ```
-DNS
-    Off
-    自定义;0.0.0.0,8.8.8.8（DNS由代理服务器解析,8.8.8.8保证连接稳定性）
-```
 
 **步骤C：tailscale网页控制配置**  
 [tailscale网页控制台](https://login.tailscale.com/admin/machines)，进去登陆
@@ -61,6 +57,13 @@ tailscale服务器-选择软路由
     Edit route settings
         Exit Node On
         #不开启就无法连接Socks5服务
+```
+
+```
+DNS设置，找到Global nameservers，打开Override DNS servers
+Add nameserver——可以选任意能用的
+也可填局域网内的DNS Server（有就更建议）
+这个DNS，要打开Use with exit node
 ```
 
 **步骤D：准备Socks5Server提供主机，（以Mac为例）**  
@@ -73,6 +76,8 @@ tailscale服务器-选择软路由
 `brew install microsocks`  
 #启动
 `microsocks -i 0.0.0.0 -p 1080`
+
+我用的Gost,有提供到DNS服务器，tailscale网页控制台填写的就是Socks5Server的ip（microsocks好像也有提供）
 
 **步骤E：软路由，安装ipt2socks（流量转发工具，iOS的出口流量，转发到Socks5）**
 安装ipt2socks，[详细看官方参考](https://github.com/zfl9/ipt2socks/)
