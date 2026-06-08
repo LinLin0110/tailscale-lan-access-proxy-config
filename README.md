@@ -33,8 +33,9 @@
 #启动tailscale，并开启exit-node  
 `sudo tailscale up --advertise-exit-node`
 
-#建议：关ipv6防泄漏-防止出现ipv6依然为CN的情况；以及打开Subnet routes
+#关ipv6防泄漏-防止出现ipv6依然为CN的情况；
 `sudo TS_NO_IPV6=1 tailscaled`
+#以及打开路由器端 要开Subnet routes（iPhone不一定要开，路由器上一定要）；
 `sudo tailscale set --advertise-routes=192.168.1.0/24`
 
 **步骤B：用户端配置（iPhone为例）**  
